@@ -98,6 +98,18 @@ Vue.component('task-column', {
           />
         </li>
       </ul>
+
+      <h2>Задачи в тестировании</h2>
+      <ul>
+        <li v-for="(task, index) in tasks.filter(task => task.status === 'testing')" :key="index">
+          <task-item
+            :task="task"
+            :index="index"
+            @delete-task="deleteTask"
+            @update-task="updateTask"
+          />
+        </li>
+      </ul>
     </div>
   `
 });
@@ -119,7 +131,8 @@ Vue.component('task-item', {
             editing: false, // Флаг редактирования
             editedTitle: this.task.title,
             editedDescription: this.task.description,
-            editedDeadline: this.task.deadline
+            editedDeadline: this.task.deadline,
+            returnReason: '' // Причина возврата
         };
     },
     methods: {
@@ -143,6 +156,23 @@ Vue.component('task-item', {
         moveToInProgress() {
             const updatedTask = { ...this.task, status: 'inProgress' };
             this.$emit('update-task', { index: this.index, updatedTask });
+        },
+        moveToTesting() {
+            const updatedTask = { ...this.task, status: 'testing' };
+            this.$emit('update-task', { index: this.index, updatedTask });
+        },
+        returnToInProgress() {
+            if (this.returnReason) {
+                const updatedTask = {
+                    ...this.task,
+                    status: 'inProgress',
+                    returnReason: this.returnReason // Указываем причину возврата
+                };
+                this.$emit('update-task', { index: this.index, updatedTask });
+                this.returnReason = ''; // Сбрасываем причину после отправки
+            } else {
+                alert('Укажите причину возврата');
+            }
         }
     },
     template: `
@@ -170,13 +200,21 @@ Vue.component('task-item', {
         <p><em>Дедлайн: {{ task.deadline }}</em></p>
         <p>Status: {{ task.status }}</p>
         <p v-if="task.lastEdited">Последнее редактирование: {{ task.lastEdited }}</p>
+        <p v-if="task.returnReason">Причина возврата: {{ task.returnReason }}</p> <!-- Отображение причины возврата -->
         <button @click="editTask">Редактировать</button>
         <button @click="deleteTask">Удалить</button>
-        <button @click="moveToInProgress">Далее</button>
+        <button v-if="task.status === 'unfinished'" @click="moveToInProgress">Далее</button>
+        <button v-if="task.status === 'inProgress'" @click="moveToTesting">Тестирование</button>
+        <div v-if="task.status === 'testing'">
+          <label for="returnReason">Причина возврата:</label>
+          <textarea id="returnReason" v-model="returnReason" required></textarea>
+          <button @click="returnToInProgress">Вернуть в работу</button>
+        </div>
       </div>
     </div>
   `
 });
+
 
 
 
