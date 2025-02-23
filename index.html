@@ -8,11 +8,11 @@
 </head>
 <body>
 <div id="app">
-    <!-- Вставляем компонент формы для создания задачи -->
+    <!-- Компонент для создания задачи -->
     <task-form @add-task="addTask"></task-form>
 
-    <!-- Вставляем компонент для отображения запланированных задач -->
-    <task-column :tasks="tasks"></task-column>
+    <!-- Компонент для отображения задач с возможностью редактирования -->
+    <task-column :tasks="tasks" @delete-task="deleteTask" @update-task="updateTask"></task-column>
 </div>
 
 <!-- Подключаем Vue -->
