@@ -75,54 +75,54 @@ Vue.component('task-column', {
     },
     template: `
     <div>
-      <h2>Запланированные задачи</h2>
-      <ul>
-        <li v-for="(task, index) in tasks.filter(task => task.status === 'unfinished')" :key="index">
-          <task-item
-            :task="task"
-            :index="index"
-            @delete-task="deleteTask"
-            @update-task="updateTask"
-          />
-        </li>
-      </ul>
+    <h2>Запланированные задачи</h2>
+    <ul>
+      <li v-for="(task, index) in tasks.filter(task => task.status === 'unfinished')" :key="index">
+        <task-item
+          :task="task"
+          :index="index"
+          @delete-task="deleteTask"
+          @update-task="updateTask"
+        />
+      </li>
+    </ul>
 
-      <h2>Задачи в работе</h2>
-      <ul>
-        <li v-for="(task, index) in tasks.filter(task => task.status === 'inProgress')" :key="index">
-          <task-item
-            :task="task"
-            :index="index"
-            @delete-task="deleteTask"
-            @update-task="updateTask"
-          />
-        </li>
-      </ul>
+    <h2>Задачи в работе</h2>
+    <ul>
+      <li v-for="(task, index) in tasks.filter(task => task.status === 'inProgress')" :key="index">
+        <task-item
+          :task="task"
+          :index="index"
+          @delete-task="deleteTask"
+          @update-task="updateTask"
+        />
+      </li>
+    </ul>
 
-      <h2>Задачи в тестировании</h2>
-      <ul>
-        <li v-for="(task, index) in tasks.filter(task => task.status === 'testing')" :key="index">
-          <task-item
-            :task="task"
-            :index="index"
-            @delete-task="deleteTask"
-            @update-task="updateTask"
-          />
-        </li>
-      </ul>
+    <h2>Задачи в тестировании</h2>
+    <ul>
+      <li v-for="(task, index) in tasks.filter(task => task.status === 'testing')" :key="index">
+        <task-item
+          :task="task"
+          :index="index"
+          @delete-task="deleteTask"
+          @update-task="updateTask"
+        />
+      </li>
+    </ul>
 
-      <h2>Выполненные задачи</h2> <!-- Новый столбец для выполненных задач -->
-      <ul>
-        <li v-for="(task, index) in tasks.filter(task => task.status === 'finished')" :key="index">
-          <task-item
-            :task="task"
-            :index="index"
-            @delete-task="deleteTask"
-            @update-task="updateTask"
-          />
-        </li>
-      </ul>
-    </div>
+    <h2>Выполненные задачи</h2>
+    <ul>
+      <li v-for="(task, index) in tasks.filter(task => task.status === 'finished')" :key="index">
+        <task-item
+          :task="task"
+          :index="index"
+          @delete-task="deleteTask"
+          @update-task="updateTask"
+        />
+      </li>
+    </ul>
+  </div>
   `
 });
 
@@ -202,51 +202,49 @@ Vue.component('task-item', {
         }
     },
     template: `
-<div>
-  <div v-if="editing">
-    <!-- Форма для редактирования задачи -->
-    <div>
-      <label for="title">Заголовок</label>
-      <input type="text" id="title" v-model="editedTitle" required />
+<div :class="['task-item', { 'overdue': task.isOverdue, 'on-time': !task.isOverdue }]">
+    <div v-if="editing">
+      <div>
+        <label for="title">Заголовок</label>
+        <input type="text" id="title" v-model="editedTitle" required />
+      </div>
+      <div>
+        <label for="description">Описание</label>
+        <textarea id="description" v-model="editedDescription" required></textarea>
+      </div>
+      <div>
+        <label for="deadline">Дедлайн</label>
+        <input type="date" id="deadline" v-model="editedDeadline" required />
+      </div>
+      <button @click="saveTask">Сохранить</button>
     </div>
-    <div>
-      <label for="description">Описание</label>
-      <textarea id="description" v-model="editedDescription" required></textarea>
+    <div v-else>
+      <strong>{{ task.title }}</strong>
+      <p>{{ task.description }}</p>
+      <p><em>Дедлайн: {{ task.deadline }}</em></p>
+      <p>Status: {{ task.status }}</p>
+      <p v-if="task.lastEdited">Последнее редактирование: {{ task.lastEdited }}</p>
+      <p v-if="task.returnReason">Причина возврата: {{ task.returnReason }}</p>
+      <button @click="editTask">Редактировать</button>
+      <button v-if="task.status === 'unfinished'" @click="deleteTask">Удалить</button>
+      <button v-if="task.status === 'unfinished'" @click="moveToInProgress">Далее</button>
+      <button v-if="task.status === 'inProgress'" @click="moveToTesting">Тестирование</button>
+      <div v-if="task.status === 'testing'">
+        <label for="returnReason">Причина возврата:</label>
+        <textarea id="returnReason" v-model="returnReason" required></textarea>
+        <button @click="returnToInProgress">Вернуть в работу</button>
+        <button @click="moveToFinished">Завершить</button>
+      </div>
+      <p v-if="task.status === 'finished'">
+        <strong v-if="task.isOverdue">Задача просрочена!</strong>
+        <strong v-else>Задача выполнена в срок.</strong>
+      </p>
     </div>
-    <div>
-      <label for="deadline">Дедлайн</label>
-      <input type="date" id="deadline" v-model="editedDeadline" required />
-    </div>
-    <button @click="saveTask">Сохранить</button>
   </div>
-  <div v-else>
-    <!-- Отображение задачи -->
-    <strong>{{ task.title }}</strong>
-    <p>{{ task.description }}</p>
-    <p><em>Дедлайн: {{ task.deadline }}</em></p>
-    <p>Status: {{ task.status }}</p>
-    <p v-if="task.lastEdited">Последнее редактирование: {{ task.lastEdited }}</p>
-    <p v-if="task.returnReason">Причина возврата: {{ task.returnReason }}</p> <!-- Отображение причины возврата -->
-    <button @click="editTask">Редактировать</button>
-    <button v-if="task.status === 'unfinished'" @click="deleteTask">Удалить</button> <!-- Удаление только в статусе "unfinished" -->
-    <button v-if="task.status === 'unfinished'" @click="moveToInProgress">Далее</button>
-    <button v-if="task.status === 'inProgress'" @click="moveToTesting">Тестирование</button>
-    <div v-if="task.status === 'testing'">
-      <label for="returnReason">Причина возврата:</label>
-      <textarea id="returnReason" v-model="returnReason" required></textarea>
-      <button @click="returnToInProgress">Вернуть в работу</button>
-      <button @click="moveToFinished">Завершить</button>
-    </div>
-    <!-- Отображаем информацию о просрочке или выполнении в срок -->
-    <p v-if="task.status === 'finished'">
-      <strong v-if="task.isOverdue">Задача просрочена!</strong>
-      <strong v-else>Задача выполнена в срок.</strong>
-    </p>
-  </div>
-</div>
 `
 });
 
+// модальное окно, драгондроп ( перемещение
 
 
 

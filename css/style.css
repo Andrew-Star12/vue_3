@@ -1,0 +1,130 @@
+/* Основные стили для приложения */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Контейнер для приложения */
+#app {
+    width: 80%;
+    max-width: 1200px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовки для каждого столбца */
+h2 {
+    color: #333;
+    font-size: 24px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Стиль для формы создания задачи */
+form {
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Стили для карточек задач */
+.task-item {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.task-item strong {
+    font-size: 18px;
+    color: #333;
+}
+
+.task-item p {
+    color: #555;
+    margin: 5px 0;
+}
+
+.task-item .overdue {
+    color: red;
+    font-weight: bold;
+}
+
+.task-item .on-time {
+    color: green;
+    font-weight: bold;
+}
+
+/* Стиль для кнопок в карточке задачи */
+button {
+    margin: 5px;
+}
+
+button:disabled {
+    background-color: #bbb;
+}
+
+/* Стиль для колонок с задачами */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    margin-bottom: 15px;
+}
+
+/* Общие стили для состояния в редактировании */
+input:focus, textarea:focus {
+    border-color: #4CAF50;
+}
